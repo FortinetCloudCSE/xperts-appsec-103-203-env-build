@@ -65,7 +65,7 @@ jobs:
         working-directory: ./terraform
         run: terraform plan -var="subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }}" -var="vm_username=${{ vars.ENV_VM_USERNAME }}" -var="username_prefix=${{ vars.ENV_USERNAME_PREFIX }}" -var="user_count=${{ env.user_count }}" -var="user_start=${{ env.user_start }}" -var="rg-suffix=${{ vars.ENV_RG_SUFFIX }}" -var="location=${{ vars.ENV_LOCATION }}" -var="password=${{ vars.ENV_BASIC_PASSWORD }}" -var="fortiflexvm_account_id=${{ secrets.FORTIFLEXVM_ACCOUNT_ID }}" -var="fortiflexvm_program_serial_number=${{ secrets.FORTIFLEXVM_PROGRAM_SERIAL_NUMBER }}" -var="fortiflex_access_username=${{ secrets.FORTIFLEX_ACCESS_USERNAME }}" -var="fortiflex_access_password=${{ secrets.FORTIFLEX_ACCESS_PASSWORD }}" -no-color -out=tfplan
         env:
-          TF_VAR_fortiflex_serial_numbers: ${{ fromJSON(secrets.FORTIFLEX_SERIAL_NUMBERS) }}
+          TF_VAR_fortiflex_serial_numbers: ${{ secrets.FORTIFLEX_SERIAL_NUMBERS }}
 
 
       - name: Terraform Apply
@@ -74,4 +74,4 @@ jobs:
         working-directory: ./terraform
         run: terraform apply -var="subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }}" -var="vm_username=${{ vars.ENV_VM_USERNAME }}" -var="username_prefix=${{ vars.ENV_USERNAME_PREFIX }}" -var="user_count=${{ env.user_count }}" -var="user_start=${{ env.user_start }}" -var="rg-suffix=${{ vars.ENV_RG_SUFFIX }}" -var="location=${{ vars.ENV_LOCATION }}" -var="password=${{ vars.ENV_BASIC_PASSWORD }}" -var="fortiflexvm_account_id=${{ secrets.FORTIFLEXVM_ACCOUNT_ID }}" -var="fortiflexvm_program_serial_number=${{ secrets.FORTIFLEXVM_PROGRAM_SERIAL_NUMBER }}" -var="fortiflex_access_username=${{ secrets.FORTIFLEX_ACCESS_USERNAME }}" -var="fortiflex_access_password=${{ secrets.FORTIFLEX_ACCESS_PASSWORD }}" -auto-approve -parallelism=20 -no-color tfplan
         env:
-          TF_VAR_fortiflex_serial_numbers: ${{ fromJSON(secrets.FORTIFLEX_SERIAL_NUMBERS) }}
+          TF_VAR_fortiflex_serial_numbers: ${{ secrets.FORTIFLEX_SERIAL_NUMBERS }}
