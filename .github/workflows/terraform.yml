@@ -113,9 +113,9 @@ jobs:
             Start-Sleep -Seconds 60 # Wait for a minute to ensure VMs are ready
 
             # Get all VMs matching these names
-            $vmFadPrimary = Get-AzVM -Name FAD-Secondary -ResourceGroupName adc??-AppSec103-203-FortiAdc
-            $vmFadPrimary = Get-AzVM -Name FAD-Secondary -ResourceGroupName adc??-AppSec103-203-FortiAdc
-            $vms = @($vmFadPrimary, $vmFadPrimary)
+            $vmsFadPrimary = Get-AzVM -Name FAD-Primary -ResourceGroupName adc??-AppSec103-203-FortiAdc
+            $vmsFadSecondary = Get-AzVM -Name FAD-Secondary -ResourceGroupName adc??-AppSec103-203-FortiAdc
+            $vms = @($vmsFadPrimary, $vmsFadSecondary)
 
             if ($null -eq $vms -or $vms.Count -eq 0) {
                 Write-Warning "No VMs found."
@@ -123,7 +123,7 @@ jobs:
                 # Loop through each VM and restart it
                 foreach ($vm in $vms) {
                     Write-Host "Restarting VM: $($vm.Name) in Resource Group: $($vm.ResourceGroupName)..."
-                    Restart-AzVM -ResourceGroupName $vm.ResourceGroupName -Name $vm.Name -Force
+                    Restart-AzVM -ResourceGroupName $($vm.ResourceGroupName) -Name $($vm.Name) -Force
                 }
             }
           azPSVersion: "latest"
