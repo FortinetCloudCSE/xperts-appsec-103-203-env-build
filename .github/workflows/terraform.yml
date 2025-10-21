@@ -111,5 +111,6 @@ jobs:
         with:
           inlineScript: |
             Start-Sleep -Seconds 60 # Wait for a minute to ensure VMs are ready
-            Get-AzVM -ResourceGroupName ${{ vars.ENV_USERNAME_PREFIX }}??-${{ vars.ENV_RG_SUFFIX }} | ?{$_.Name -match 'FAD-Primary|FAD-Secondary'} | Restart-AzVM -NoWait -Confirm:$true
+            Get-AzVM -ResourceGroupName ${{ vars.ENV_USERNAME_PREFIX }}??-${{ vars.ENV_RG_SUFFIX }} | ?{$_.Name -match 'FAD-Primary|FAD-Secondary'} | Restart-AzVM -NoWait -Confirm:$true -WhatIf
+            Get-AzVM -ResourceGroupName adc??-AppSec103-203-FortiAdc | ?{$_.Name -match 'FAD-Primary|FAD-Secondary' -and (-not $_.Tags.ContainsKey("FAD-RESTARTED"))} | %{New-AzTag -ResourceId $_.Id -Tag @{"FAD-RESTARTED"="True"} -WhatIf}
           azPSVersion: "latest"
