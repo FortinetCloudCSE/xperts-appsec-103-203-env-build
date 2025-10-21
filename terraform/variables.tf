@@ -69,3 +69,9 @@ variable "subscription_id" {
   type        = string
   default     = ""
 }
+
+variable "output_enabled" {
+  description = "Enable or disable outputs"
+  type        = bool
+  default     = false
+}
