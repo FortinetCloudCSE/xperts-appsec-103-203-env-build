@@ -75,19 +75,19 @@ resource "fortiflexvm_entitlements_vm_token" "entitlements_vm_token_vm_adc_2" {
 }
 
 output "entitlements_vm_adc_1" {
-  value = fortiflexvm_entitlements_vm.entitlements_vm_adc_1[*]
+  value = var.output_enabled ? fortiflexvm_entitlements_vm.entitlements_vm_adc_1[*] : []
 }
 
 output "entitlements_vm_token_adc_1" {
-  value = fortiflexvm_entitlements_vm_token.entitlements_vm_token_vm_adc_1[*]
+  value = var.output_enabled ? fortiflexvm_entitlements_vm_token.entitlements_vm_token_vm_adc_1[*] : []
 }
 
 output "entitlements_vm_adc_2" {
-  value = fortiflexvm_entitlements_vm.entitlements_vm_adc_2[*]
+  value = var.output_enabled ? fortiflexvm_entitlements_vm.entitlements_vm_adc_2[*] : []
 }
 
 output "entitlements_vm_token_adc_2" {
-  value = fortiflexvm_entitlements_vm_token.entitlements_vm_token_vm_adc_2[*]
+  value = var.output_enabled ? fortiflexvm_entitlements_vm_token.entitlements_vm_token_vm_adc_2[*] : []
 }
 
 output "bastion_shareable_link" {
