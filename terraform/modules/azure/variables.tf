@@ -6,7 +6,7 @@ variable "password" {
   description = "Password for the admin user"
   type        = string
 }
-variable "rg-prefix" {
+variable "rg_prefix" {
   description = "The prefix to use for all resource group names"
   type        = string
 }
@@ -17,7 +17,7 @@ variable "location" {
   default     = ""
 }
 
-variable "rg-suffix" {
+variable "rg_suffix" {
   description = "Suffix for the resource group name"
   type        = string
   default     = ""

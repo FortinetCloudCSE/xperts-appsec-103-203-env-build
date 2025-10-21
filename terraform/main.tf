@@ -4,7 +4,7 @@ locals {
   user_count      = tonumber(var.user_count)
   user_start      = tonumber(var.user_start)
 
-  rg-suffix   = var.rg-suffix
+  rg_suffix   = var.rg_suffix
   location    = var.location
   vm_username = var.vm_username
   password    = var.password
@@ -22,8 +22,8 @@ module "module_appsec-102-203" {
   source = "./modules/azure"
 
   location    = local.location
-  rg-suffix   = local.rg-suffix
-  rg-prefix   = each.value.username
+  rg_suffix   = local.rg_suffix
+  rg_prefix   = each.value.username
   vm_username = local.vm_username
   password    = local.password
 

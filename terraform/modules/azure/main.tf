@@ -1,8 +1,8 @@
 locals {
   vm_username             = var.vm_username
   password                = var.password
-  rg-prefix               = var.rg-prefix
-  resource_group_name     = "${local.rg-prefix}-${var.rg-suffix}"
+  rg_prefix               = var.rg_prefix
+  resource_group_name     = "${local.rg_prefix}-${var.rg_suffix}"
   resource_group_location = var.location
 
   shared_image_versions = {
@@ -145,7 +145,7 @@ resource "azurerm_storage_account" "storage_account" {
   resource_group_name = azurerm_resource_group.resource_group.name
   location            = azurerm_resource_group.resource_group.location
 
-  name = format("%s%s", local.rg-prefix, random_id.id.hex)
+  name = format("%s%s", local.rg_prefix, random_id.id.hex)
 
   account_tier             = "Standard"
   account_replication_type = "LRS"
