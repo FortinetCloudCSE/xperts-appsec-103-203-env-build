@@ -27,14 +27,15 @@ module "module_appsec-102-203" {
   vm_username = local.vm_username
   password    = local.password
 
-  fortiflexvm_token_adc_1 = fortiflexvm_entitlements_vm_token.entitlements_vm_token_vm_adc_1[each.value.username].token
-  fortiflexvm_token_adc_2 = fortiflexvm_entitlements_vm_token.entitlements_vm_token_vm_adc_2[each.value.username].token
-
+  fortiflexvm_token_adc_1 = fortiflexvm_entitlements_vm_token.entitlements_vm_token["${each.value.username}_adc_1"].token
+  fortiflexvm_token_adc_2 = fortiflexvm_entitlements_vm_token.entitlements_vm_token["${each.value.username}_adc_2"].token
 }
 
 data "fortiflexvm_entitlements_list" "entitlements_list" {
-
-  for_each = var.fortiflex_serial_numbers
+  for_each =  {
+    for k, v in var.fortiflex_serial_numbers : k => v
+    if contains(keys(local.environments), split("_", k)[0])
+  }
 
   account_id            = var.fortiflexvm_account_id
   program_serial_number = var.fortiflexvm_program_serial_number
@@ -42,52 +43,38 @@ data "fortiflexvm_entitlements_list" "entitlements_list" {
   serial_number = each.value.fortiflex_serial
 }
 
-resource "fortiflexvm_entitlements_vm" "entitlements_vm_adc_1" {
-  for_each = local.environments
+resource "fortiflexvm_entitlements_vm" "entitlements_vm" {
+  for_each =  {
+    for k, v in var.fortiflex_serial_numbers :k => v
+    if contains(keys(local.environments), split("_", k)[0])
+  }
 
-  config_id     = data.fortiflexvm_entitlements_list.entitlements_list["${each.value.username}_adc_1"].entitlements[0].config_id
-  serial_number = data.fortiflexvm_entitlements_list.entitlements_list["${each.value.username}_adc_1"].entitlements[0].serial_number
+  config_id     = data.fortiflexvm_entitlements_list.entitlements_list[each.key].entitlements[0].config_id
+  serial_number = data.fortiflexvm_entitlements_list.entitlements_list[each.key].entitlements[0].serial_number
   status        = "ACTIVE"
 }
 
-resource "fortiflexvm_entitlements_vm_token" "entitlements_vm_token_vm_adc_1" {
-  for_each = local.environments
+resource "fortiflexvm_entitlements_vm_token" "entitlements_vm_token" {
+  for_each =  {
+    for k, v in var.fortiflex_serial_numbers :k => v
+    if contains(keys(local.environments), split("_", k)[0])
+  }
 
-  config_id        = data.fortiflexvm_entitlements_list.entitlements_list["${each.value.username}_adc_1"].entitlements[0].config_id
-  serial_number    = data.fortiflexvm_entitlements_list.entitlements_list["${each.value.username}_adc_1"].entitlements[0].serial_number
-  regenerate_token = data.fortiflexvm_entitlements_list.entitlements_list["${each.value.username}_adc_1"].entitlements[0].token_status == "USED" && data.fortiflexvm_entitlements_list.entitlements_list[each.key].entitlements[0].status == "ACTIVE" ? false : true
+  config_id        = data.fortiflexvm_entitlements_list.entitlements_list[each.key].entitlements[0].config_id
+  serial_number    = data.fortiflexvm_entitlements_list.entitlements_list[each.key].entitlements[0].serial_number
+  regenerate_token = data.fortiflexvm_entitlements_list.entitlements_list[each.key].entitlements[0].token_status == "USED" && data.fortiflexvm_entitlements_list.entitlements_list[each.key].entitlements[0].status == "ACTIVE" ? false : true
 }
 
-resource "fortiflexvm_entitlements_vm" "entitlements_vm_adc_2" {
-  for_each = local.environments
-
-  config_id     = data.fortiflexvm_entitlements_list.entitlements_list["${each.value.username}_adc_2"].entitlements[0].config_id
-  serial_number = data.fortiflexvm_entitlements_list.entitlements_list["${each.value.username}_adc_2"].entitlements[0].serial_number
-  status        = "ACTIVE"
+output "entitlements_list" {
+  value = output_enabled ? data.fortiflexvm_entitlements_list.entitlements_list[*] : []
 }
 
-resource "fortiflexvm_entitlements_vm_token" "entitlements_vm_token_vm_adc_2" {
-  for_each = local.environments
-
-  config_id        = data.fortiflexvm_entitlements_list.entitlements_list["${each.value.username}_adc_2"].entitlements[0].config_id
-  serial_number    = data.fortiflexvm_entitlements_list.entitlements_list["${each.value.username}_adc_2"].entitlements[0].serial_number
-  regenerate_token = data.fortiflexvm_entitlements_list.entitlements_list["${each.value.username}_adc_2"].entitlements[0].token_status == "USED" && data.fortiflexvm_entitlements_list.entitlements_list[each.key].entitlements[0].status == "ACTIVE" ? false : true
+output "entitlements_vm" {
+  value = output_enabled ? fortiflexvm_entitlements_vm.entitlements_vm[*] : []
 }
 
-output "entitlements_vm_adc_1" {
-  value = var.output_enabled ? fortiflexvm_entitlements_vm.entitlements_vm_adc_1[*] : []
-}
-
-output "entitlements_vm_token_adc_1" {
-  value = var.output_enabled ? fortiflexvm_entitlements_vm_token.entitlements_vm_token_vm_adc_1[*] : []
-}
-
-output "entitlements_vm_adc_2" {
-  value = var.output_enabled ? fortiflexvm_entitlements_vm.entitlements_vm_adc_2[*] : []
-}
-
-output "entitlements_vm_token_adc_2" {
-  value = var.output_enabled ? fortiflexvm_entitlements_vm_token.entitlements_vm_token_vm_adc_2[*] : []
+output "entitlements_vm_token" {
+  value = output_enabled ? fortiflexvm_entitlements_vm_token.entitlements_vm_token[*] : []
 }
 
 output "bastion_shareable_link" {
