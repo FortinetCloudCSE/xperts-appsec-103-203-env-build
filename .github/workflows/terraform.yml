@@ -110,6 +110,7 @@ jobs:
         with:
           inlineScript: |
             Start-Sleep -Seconds 60 # Wait for a minute to ensure VMs are ready
+            Connect-AzAccount -Subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
             # Get all VMs matching these names
             $vmFadPrimary = Get-AzVM -Name FAD-Secondary -ResourceGroupName adc??-AppSec103-203-FortiAdc
             $vmFadPrimary = Get-AzVM -Name FAD-Secondary -ResourceGroupName adc??-AppSec103-203-FortiAdc
