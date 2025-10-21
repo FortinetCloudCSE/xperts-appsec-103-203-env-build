@@ -614,6 +614,10 @@ resource "azurerm_linux_virtual_machine" "fad-primary" {
     version   = "8.0.0"
   }
   custom_data = base64encode(local.fad-primary-cloudinit)
+
+  lifecycle {
+    ignore_changes = [tags]
+  }
 }
 
 resource "azurerm_managed_disk" "managed_disk-fad-primary" {
@@ -671,6 +675,10 @@ resource "azurerm_linux_virtual_machine" "fad-secondary" {
     version   = "latest"
   }
   custom_data = base64encode(local.fad-secondary-cloudinit)
+
+  lifecycle {
+    ignore_changes = [tags]
+  }
 }
 
 resource "azurerm_managed_disk" "managed_disk-fad-secondary" {
