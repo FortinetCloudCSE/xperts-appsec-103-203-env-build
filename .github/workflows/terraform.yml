@@ -113,8 +113,8 @@ jobs:
             Start-Sleep -Seconds 60 # Wait for a minute to ensure VMs are ready
 
             # Get all VMs matching these names
-            $vmsFadPrimary = Get-AzVM -Name FAD-Primary -ResourceGroupName adc??-AppSec103-203-FortiAdc
-            $vmsFadSecondary = Get-AzVM -Name FAD-Secondary -ResourceGroupName adc??-AppSec103-203-FortiAdc
+            $vmsFadPrimary = Get-AzVM -Name FAD-Primary -ResourceGroupName ${{ vars.ENV_USERNAME_PREFIX }}??-${{ vars.ENV_RG_SUFFIX }}
+            $vmsFadSecondary = Get-AzVM -Name FAD-Secondary -ResourceGroupName ${{ vars.ENV_USERNAME_PREFIX }}??-${{ vars.ENV_RG_SUFFIX }}
             $vms = @($vmsFadPrimary, $vmsFadSecondary)
 
             if ($null -eq $vms -or $vms.Count -eq 0) {
