@@ -78,5 +78,5 @@ output "entitlements_vm_token" {
 }
 
 output "bastion_shareable_link" {
-  value = [for key, rg in module.module_appsec-102-203 : format("%s, %s, %s", key, var.password, rg.bastion_shareable_links.value[0].bsl)]
+  value = [for key, rg in module.module_appsec-102-203 : format("%s, %s", key, rg.bastion_shareable_links.value[0].bsl)]
 }
