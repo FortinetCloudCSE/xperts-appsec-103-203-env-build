@@ -32,7 +32,7 @@ module "module_appsec-102-203" {
 }
 
 data "fortiflexvm_entitlements_list" "entitlements_list" {
-  for_each =  {
+  for_each = {
     for k, v in var.fortiflex_serial_numbers : k => v
     if contains(keys(local.environments), split("_", k)[0])
   }
@@ -44,8 +44,8 @@ data "fortiflexvm_entitlements_list" "entitlements_list" {
 }
 
 resource "fortiflexvm_entitlements_vm" "entitlements_vm" {
-  for_each =  {
-    for k, v in var.fortiflex_serial_numbers :k => v
+  for_each = {
+    for k, v in var.fortiflex_serial_numbers : k => v
     if contains(keys(local.environments), split("_", k)[0])
   }
 
@@ -55,8 +55,8 @@ resource "fortiflexvm_entitlements_vm" "entitlements_vm" {
 }
 
 resource "fortiflexvm_entitlements_vm_token" "entitlements_vm_token" {
-  for_each =  {
-    for k, v in var.fortiflex_serial_numbers :k => v
+  for_each = {
+    for k, v in var.fortiflex_serial_numbers : k => v
     if contains(keys(local.environments), split("_", k)[0])
   }
 
@@ -66,15 +66,15 @@ resource "fortiflexvm_entitlements_vm_token" "entitlements_vm_token" {
 }
 
 output "entitlements_list" {
-  value = output_enabled ? data.fortiflexvm_entitlements_list.entitlements_list[*] : []
+  value = var.output_enabled ? data.fortiflexvm_entitlements_list.entitlements_list[*] : []
 }
 
 output "entitlements_vm" {
-  value = output_enabled ? fortiflexvm_entitlements_vm.entitlements_vm[*] : []
+  value = var.output_enabled ? fortiflexvm_entitlements_vm.entitlements_vm[*] : []
 }
 
 output "entitlements_vm_token" {
-  value = output_enabled ? fortiflexvm_entitlements_vm_token.entitlements_vm_token[*] : []
+  value = var.output_enabled ? fortiflexvm_entitlements_vm_token.entitlements_vm_token[*] : []
 }
 
 output "bastion_shareable_link" {
