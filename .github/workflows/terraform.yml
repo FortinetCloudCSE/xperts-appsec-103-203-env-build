@@ -104,7 +104,7 @@ jobs:
         if: (github.event_name == 'workflow_dispatch')
         id: output
         working-directory: ./terraform
-        run: terraform output bastion_shareable_link
+        run: terraform output bastion_shareable_link -no-color
 
       - name: Reboot VMs in resource group
         uses: azure/powershell@v2
