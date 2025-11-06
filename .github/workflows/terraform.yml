@@ -1,4 +1,4 @@
-name: Terraform Azure Deployment
+name: Terraform Azure Deployment - AppSec 103-203 Env Build
 
 on:
   workflow_dispatch:
@@ -14,7 +14,7 @@ on:
         default: '10'
         type: string
 jobs:
-  terraform:
+  ENV_BUILD:
     permissions:
       id-token: write
       contents: read
@@ -93,7 +93,7 @@ jobs:
         working-directory: ./terraform
         run: terraform output bastion_shareable_link -no-color
 
-      - name: Reboot VMs in resource group
+      - name: PowerShell - Reboot VMs in resource group
         uses: azure/powershell@v2
         with:
           inlineScript: |
