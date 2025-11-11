@@ -79,7 +79,6 @@ jobs:
           TF_VAR_fortiflex_serial_numbers: ${{ secrets.FORTIFLEX_SERIAL_NUMBERS }}
 
       - name: Terraform Apply
-        if: (github.event_name == 'workflow_dispatch')
         id: apply
         working-directory: ./terraform
         run: terraform apply -auto-approve -parallelism=20 -no-color tfplan
@@ -99,12 +98,19 @@ jobs:
           TF_VAR_fortiflex_serial_numbers: ${{ secrets.FORTIFLEX_SERIAL_NUMBERS }}
 
       - name: Terraform Output
-        if: (github.event_name == 'workflow_dispatch')
         id: output
         working-directory: ./terraform
         run: terraform output bastion_shareable_link -no-color
 
-      - name: PowerShell - Reboot VMs in resource group
+      - name: Azure Re-Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          enable-AzPSSession: true
+
+      - name: PowerShell - Reboot VMs in resource groups that have not been restarted yet
         uses: azure/powershell@v2
         with:
           inlineScript: |
