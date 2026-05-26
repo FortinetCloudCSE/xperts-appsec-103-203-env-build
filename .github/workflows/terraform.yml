@@ -62,7 +62,7 @@ jobs:
       - name: Terraform Plan
         id: plan
         working-directory: ./terraform
-        run: terraform plan -parallelism=5 -no-color -out=tfplan
+        run: terraform plan -parallelism=3 -no-color -out=tfplan
         env:
           TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           TF_VAR_vm_username: ${{ vars.ENV_VM_USERNAME }}
@@ -82,7 +82,7 @@ jobs:
         if: (github.event_name == 'workflow_dispatch')
         id: apply
         working-directory: ./terraform
-        run: terraform apply -auto-approve -parallelism=5 -no-color tfplan
+        run: terraform apply -auto-approve -parallelism=3 -no-color tfplan
         env:
           TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           TF_VAR_vm_username: ${{ vars.ENV_VM_USERNAME }}
