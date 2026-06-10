@@ -37,17 +37,17 @@ module "module_appsec-102-203" {
 
 }
 
-output "fad_vm_tokens" {
-  value = {
-    value = module.module_appsec-102-203[*]
-  }
-}
+# output "fad_vm_tokens" {
+#   value = {
+#     value = module.module_appsec-102-203[*]
+#   }
+# }
 
-output "environments" {
-  value = {
-    value = local.environments
-  }
-}
+# output "environments" {
+#   value = {
+#     value = local.environments
+#   }
+# }
 
 output "bastion_shareable_link" {
   value = [for key, rg in module.module_appsec-102-203 : replace(format("%s, %s?protocol=rdp", key, rg.bastion_shareable_links.value[0].bsl), "api/shareable-url", "#/url-metadata")]
