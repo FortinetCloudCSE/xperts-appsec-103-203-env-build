@@ -82,7 +82,7 @@ jobs:
           TF_VAR_fortiflexvm_program_serial_number: ${{ secrets.FORTIFLEXVM_PROGRAM_SERIAL_NUMBER }}
           TF_VAR_fortiflex_access_username: ${{ secrets.FORTIFLEX_ACCESS_USERNAME }}
           TF_VAR_fortiflex_access_password: ${{ secrets.FORTIFLEX_ACCESS_PASSWORD }}
-          TF_VAR_fortiflex_serial_numbers: ${{ secrets.FORTIFLEX_SERIAL_NUMBERS }}
+          TF_VAR_fortiflex_serial_numbers: ${{ vars.ENV_FORTIFLEX_SERIAL_NUMBERS }}
 
       - name: Terraform Apply
         id: apply
@@ -101,7 +101,7 @@ jobs:
           TF_VAR_fortiflexvm_program_serial_number: ${{ secrets.FORTIFLEXVM_PROGRAM_SERIAL_NUMBER }}
           TF_VAR_fortiflex_access_username: ${{ secrets.FORTIFLEX_ACCESS_USERNAME }}
           TF_VAR_fortiflex_access_password: ${{ secrets.FORTIFLEX_ACCESS_PASSWORD }}
-          TF_VAR_fortiflex_serial_numbers: ${{ secrets.FORTIFLEX_SERIAL_NUMBERS }}
+          TF_VAR_fortiflex_serial_numbers: ${{ vars.ENV_FORTIFLEX_SERIAL_NUMBERS }}
 
       - name: Terraform Output
         id: output
