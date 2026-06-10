@@ -117,7 +117,7 @@ jobs:
           enable-AzPSSession: true
 
       - name: PowerShell - Reboot VMs in resource groups that have not been restarted yet
-        uses: azure/powershell@v2
+        uses: azure/powershell@v3
         with:
           inlineScript: |
             Start-Sleep -Seconds 60 # Wait for a minute to ensure VMs are ready
