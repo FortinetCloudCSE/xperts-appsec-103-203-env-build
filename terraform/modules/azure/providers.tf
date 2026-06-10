@@ -1,13 +1,5 @@
-terraform {
-  required_providers {
-    azapi = {
-      source  = "Azure/azapi"
-      version = ">2.0"
-    }
-    fortiflexvm = {
-      source  = "fortinetdev/fortiflexvm"
-      version = ">2.0"
-    }
-  }
-  required_version = ">= 1.0.0"
+provider "fortiflexvm" {
+  # FortiFLEX VM provider configuration username and password are pulled from environment variables
+  username = var.fortiflex_access_username
+  password = var.fortiflex_access_password
 }
