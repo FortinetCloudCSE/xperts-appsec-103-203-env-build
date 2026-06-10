@@ -4,7 +4,7 @@ config system admin
 end
 config system admin
   edit "admin"
-    set password "AppSec-Xp3rts2025!"
+    set password "Fortinet123!"
 end
 config system global
   set config-sync-enable enable
@@ -14,7 +14,7 @@ config config sync-list
   edit "SyncList"
     set server-ip 10.1.2.51
     set port 995
-    set password "AppSec-Xp3rts2025!"
+    set password "Fortinet123!"
     set type system log security share-resource user 
     unset comment
   next

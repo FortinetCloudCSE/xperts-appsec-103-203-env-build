@@ -64,7 +64,7 @@ locals {
 "storage-account" : "${azurerm_storage_account.storage_account.name}",
 "container" : "${azurerm_storage_container.storage_container.name}",
 "config" : "fad-primary-config.txt",
-"flex_token": "${var.fortiflexvm_token_adc_1}"
+"flex_token": "${fortiflexvm_entitlements_vm_token.entitlements_vm_token["adc_1"].token}"
 }
 CLOUDINIT
 
@@ -73,7 +73,7 @@ CLOUDINIT
 "storage-account" : "${azurerm_storage_account.storage_account.name}",
 "container" : "${azurerm_storage_container.storage_container.name}",
 "config" : "fad-secondary-config.txt",
-"flex_token": "${var.fortiflexvm_token_adc_2}"
+"flex_token": "${fortiflexvm_entitlements_vm_token.entitlements_vm_token["adc_2"].token}"
 }
 CLOUDINIT
 
@@ -120,6 +120,37 @@ CLOUDINIT
       action                 = "getShareableLinks"
       response_export_values = ["*"]
     }
+  }
+}
+
+data "fortiflexvm_entitlements_list" "entitlements_list" {
+  for_each = var.fortiflex_serial_numbers
+
+  config_id     = var.fortiflexvm_config_id
+  serial_number = each.value.fortiflex_serial
+}
+
+resource "fortiflexvm_entitlements_vm" "entitlements_vm" {
+  for_each = var.fortiflex_serial_numbers
+
+  config_id     = var.fortiflexvm_config_id
+  serial_number = each.value.fortiflex_serial
+  status        = data.fortiflexvm_entitlements_list.entitlements_list[each.key].entitlements[0].status != "ACTIVE" ? "ACTIVE" : data.fortiflexvm_entitlements_list.entitlements_list[each.key].entitlements[0].status
+
+  lifecycle {
+    ignore_changes = [status]
+  }
+}
+
+resource "fortiflexvm_entitlements_vm_token" "entitlements_vm_token" {
+  for_each = var.fortiflex_serial_numbers
+
+  config_id        = var.fortiflexvm_config_id
+  serial_number    = each.value.fortiflex_serial
+  regenerate_token = data.fortiflexvm_entitlements_list.entitlements_list[each.key].token_status == "USED" && data.fortiflexvm_entitlements_list.entitlements_list[each.key].entitlements[0].status == "ACTIVE" ? false : true
+
+  lifecycle {
+    ignore_changes = [regenerate_token]
   }
 }
 
@@ -460,15 +491,15 @@ resource "azurerm_linux_virtual_machine" "fgtvm" {
 
   source_image_reference {
     publisher = "fortinet"
-    offer     = "fortinet_fortigate-vm_v5"
-    sku       = "fortinet_fg-vm_payg_2023_g2"
+    offer     = "fortinet_fortigate-vm"
+    sku       = "fortinet_fg-vm_payg_76"
     version   = "latest"
   }
 
   plan {
     publisher = "fortinet"
-    product   = "fortinet_fortigate-vm_v5"
-    name      = "fortinet_fg-vm_payg_2023_g2"
+    product   = "fortinet_fortigate-vm"
+    name      = "fortinet_fg-vm_payg_76"
   }
 
   os_disk {
@@ -611,7 +642,7 @@ resource "azurerm_linux_virtual_machine" "fad-primary" {
     offer     = "fortinet-fortiadc"
     publisher = "fortinet"
     sku       = "fad-vm-byol"
-    version   = "8.0.0"
+    version   = "8.0.3"
   }
   custom_data = base64encode(local.fad-primary-cloudinit)
 
@@ -738,4 +769,18 @@ data "azapi_resource_action" "resource_action_get_link" {
 
 output "bastion_shareable_links" {
   value = data.azapi_resource_action.resource_action_get_link["get_link"].output
+}
+
+output "fad_vm_tokens" {
+  value = {
+    value = fortiflexvm_entitlements_vm_token.entitlements_vm_token[*]
+  }
+}
+
+output "adc_1_cloud_init" {
+  value = local.fad-primary-cloudinit
+}
+
+output "adc_2_cloud_init" {
+  value = local.fad-secondary-cloudinit
 }

@@ -23,12 +23,24 @@ variable "rg_suffix" {
   default     = ""
 }
 
-variable "fortiflexvm_token_adc_1" {
-  description = "The FortiFlexVM token to use for this deployment"
+variable "fortiflexvm_config_id" {
+  description = "The FortiFlexVM config ID to use for this deployment"
   type        = string
 }
 
-variable "fortiflexvm_token_adc_2" {
-  description = "The FortiFlexVM token to use for this deployment"
+variable "fortiflex_serial_numbers" {
+  description = "Map of ADC FortiFlexVM serial numbers"
+  type        = map(any)
+}
+
+variable "fortiflex_access_username" {
+  description = "FortiFlexVM Access Username"
   type        = string
+  default     = ""
+}
+
+variable "fortiflex_access_password" {
+  description = "FortiFlexVM Access Password"
+  type        = string
+  default     = ""
 }

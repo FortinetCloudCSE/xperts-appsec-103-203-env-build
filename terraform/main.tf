@@ -4,10 +4,11 @@ locals {
   user_count      = tonumber(var.user_count)
   user_start      = tonumber(var.user_start)
 
-  rg_suffix   = var.rg_suffix
-  location    = var.location
-  vm_username = var.vm_username
-  password    = var.password
+  rg_suffix             = var.rg_suffix
+  location              = var.location
+  vm_username           = var.vm_username
+  password              = var.password
+  fortiflexvm_config_id = var.fortiflexvm_config_id
 
   environments = {
     for i in range(local.user_start, local.user_start + local.user_count) :
@@ -27,56 +28,27 @@ module "module_appsec-102-203" {
   vm_username = local.vm_username
   password    = local.password
 
-  fortiflexvm_token_adc_1 = fortiflexvm_entitlements_vm_token.entitlements_vm_token["${each.value.username}_adc_1"].token
-  fortiflexvm_token_adc_2 = fortiflexvm_entitlements_vm_token.entitlements_vm_token["${each.value.username}_adc_2"].token
+  fortiflex_access_username = var.fortiflex_access_username
+  fortiflex_access_password = var.fortiflex_access_password
+
+  fortiflexvm_config_id = var.fortiflexvm_config_id
+
+  fortiflex_serial_numbers = var.fortiflex_serial_numbers[each.key]
+
 }
 
-data "fortiflexvm_entitlements_list" "entitlements_list" {
-  for_each = {
-    for k, v in var.fortiflex_serial_numbers : k => v
-    if contains(keys(local.environments), split("_", k)[0])
+output "fad_vm_tokens" {
+  value = {
+    value = module.module_appsec-102-203[*]
   }
-
-  account_id            = var.fortiflexvm_account_id
-  program_serial_number = var.fortiflexvm_program_serial_number
-
-  serial_number = each.value.fortiflex_serial
 }
 
-resource "fortiflexvm_entitlements_vm" "entitlements_vm" {
-  for_each = {
-    for k, v in var.fortiflex_serial_numbers : k => v
-    if contains(keys(local.environments), split("_", k)[0])
+output "environments" {
+  value = {
+    value = local.environments
   }
-
-  config_id     = data.fortiflexvm_entitlements_list.entitlements_list[each.key].entitlements[0].config_id
-  serial_number = data.fortiflexvm_entitlements_list.entitlements_list[each.key].entitlements[0].serial_number
-  status        = "ACTIVE"
-}
-
-resource "fortiflexvm_entitlements_vm_token" "entitlements_vm_token" {
-  for_each = {
-    for k, v in var.fortiflex_serial_numbers : k => v
-    if contains(keys(local.environments), split("_", k)[0])
-  }
-
-  config_id        = data.fortiflexvm_entitlements_list.entitlements_list[each.key].entitlements[0].config_id
-  serial_number    = data.fortiflexvm_entitlements_list.entitlements_list[each.key].entitlements[0].serial_number
-  regenerate_token = data.fortiflexvm_entitlements_list.entitlements_list[each.key].entitlements[0].token_status == "USED" && data.fortiflexvm_entitlements_list.entitlements_list[each.key].entitlements[0].status == "ACTIVE" ? false : true
-}
-
-output "entitlements_list" {
-  value = var.output_enabled ? data.fortiflexvm_entitlements_list.entitlements_list[*] : []
-}
-
-output "entitlements_vm" {
-  value = var.output_enabled ? fortiflexvm_entitlements_vm.entitlements_vm[*] : []
-}
-
-output "entitlements_vm_token" {
-  value = var.output_enabled ? fortiflexvm_entitlements_vm_token.entitlements_vm_token[*] : []
 }
 
 output "bastion_shareable_link" {
-  value = [for key, rg in module.module_appsec-102-203 : format("%s, %s", key, rg.bastion_shareable_links.value[0].bsl)]
+  value = [for key, rg in module.module_appsec-102-203 : replace(format("%s, %s?protocol=rdp", key, rg.bastion_shareable_links.value[0].bsl), "api/shareable-url", "#/url-metadata")]
 }

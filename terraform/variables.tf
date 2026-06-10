@@ -37,13 +37,8 @@ variable "password" {
   type        = string
 }
 
-variable "fortiflexvm_account_id" {
-  description = "FortiFlexVM Account ID"
-  type        = string
-}
-
-variable "fortiflexvm_program_serial_number" {
-  description = "FortiFlexVM Program Serial Number"
+variable "fortiflexvm_config_id" {
+  description = "FortiFlexVM Config ID"
   type        = string
 }
 
@@ -59,19 +54,14 @@ variable "fortiflex_access_password" {
   default     = ""
 }
 
-variable "fortiflex_serial_numbers" {
-  description = "Map of FortiFlexVM serial numbers to use for entitlements"
-  type        = map(object({ fortiflex_serial = string }))
-}
-
 variable "subscription_id" {
   description = "Azure Subscription ID"
   type        = string
   default     = ""
 }
 
-variable "output_enabled" {
-  description = "Enable or disable outputs"
-  type        = bool
-  default     = false
+variable "fortiflex_serial_numbers" {
+  description = "Map of ADC FortiFlexVM serial numbers"
+  type        = map(any)
+  default     = {}
 }
