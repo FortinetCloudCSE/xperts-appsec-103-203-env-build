@@ -34,15 +34,15 @@ jobs:
           echo "password:              ${{ vars.ENV_BASIC_PASSWORD }}"
 
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
+        uses: hashicorp/setup-terraform@v4
         with:
           terraform_version: 1.13.3
 
       - name: Azure Login
-        uses: azure/login@v2
+        uses: azure/login@v3
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
@@ -62,7 +62,7 @@ jobs:
       - name: Terraform Plan
         id: plan
         working-directory: ./terraform
-        run: terraform plan -no-color -out=tfplan
+        run: terraform plan -parallelism=20 -no-color -out=tfplan
         env:
           TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           TF_VAR_vm_username: ${{ vars.ENV_VM_USERNAME }}
@@ -102,16 +102,8 @@ jobs:
         working-directory: ./terraform
         run: terraform output bastion_shareable_link -no-color
 
-      - name: Azure Re-Login
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          enable-AzPSSession: true
-
-      - name: PowerShell - Reboot VMs in resource groups that have not been restarted yet
-        uses: azure/powershell@v2
+      - name: PowerShell - Reboot VMs in resource group
+        uses: azure/powershell@v3
         with:
           inlineScript: |
             Start-Sleep -Seconds 60 # Wait for a minute to ensure VMs are ready
